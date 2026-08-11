@@ -6,6 +6,12 @@ import asyncio
 import logging
 from typing import Any
 
+from homeassistant.components.light import (
+    ATTR_BRIGHTNESS,
+    ATTR_COLOR_TEMP_KELVIN,
+    ATTR_HS_COLOR,
+    ATTR_RGB_COLOR,
+)
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     SERVICE_TURN_OFF,
@@ -36,11 +42,6 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
-ATTR_BRIGHTNESS = "brightness"
-ATTR_COLOR_TEMP_KELVIN = "color_temp_kelvin"
-ATTR_RGB_COLOR = "rgb_color"
-ATTR_HS_COLOR = "hs_color"
 
 
 def _as_int(value: Any) -> int | None:
@@ -280,7 +281,7 @@ class ProxyCoordinator:
     def _attributes_in_sync(self) -> bool:
         """Return whether the source matches the desired state (incl. attributes)."""
         actual_on = self.actual_on
-        if actual_on is None or actual_on is not self.desired_on:
+        if actual_on is None or actual_on != self.desired_on:
             return False
         if not self.desired_on:
             return True

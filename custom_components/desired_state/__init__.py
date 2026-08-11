@@ -86,8 +86,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not hass.data.get(DOMAIN):
         hass.data.pop(DOMAIN, None)
 
-    await _async_restore_source_visibility(hass, entry)
-
     return unloaded
 
 
