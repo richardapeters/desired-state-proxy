@@ -342,25 +342,27 @@ class ProxyCoordinator:
             )
             return False
 
+        domain = self.source_domain
+        if self.desired_on:
+            service = SERVICE_TURN_ON
+            data = self._build_turn_on_data()
+        else:
+            service = SERVICE_TURN_OFF
+            data = {ATTR_ENTITY_ID: self.source_entity_id}
+
+        if not self.hass.services.has_service(domain, service):
+            _LOGGER.debug(
+                "Service %s.%s not available yet, deferring reconciliation of %s",
+                domain,
+                service,
+                self.source_entity_id,
+            )
+            self._reconcile_attempts += 1
+            self._async_schedule_retry_if_needed()
+            return False
+
         self._reconciling = True
         try:
-            domain = self.source_domain
-            if self.desired_on:
-                service = SERVICE_TURN_ON
-                data = self._build_turn_on_data()
-            else:
-                service = SERVICE_TURN_OFF
-                data = {ATTR_ENTITY_ID: self.source_entity_id}
-
-            if not self.hass.services.has_service(domain, service):
-                _LOGGER.debug(
-                    "Service %s.%s not available yet, deferring reconciliation of %s",
-                    domain,
-                    service,
-                    self.source_entity_id,
-                )
-                return False
-
             _LOGGER.debug("Reconciling %s: %s.%s %s", self.source_entity_id, domain, service, data)
             self._reconcile_attempts += 1
             try:

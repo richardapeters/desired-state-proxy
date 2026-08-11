@@ -12,6 +12,7 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
 )
 from homeassistant.core import Event, HomeAssistant
+from homeassistant.setup import async_setup_component
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
@@ -19,14 +20,23 @@ from pytest_homeassistant_custom_component.common import (
 )
 
 from custom_components.desired_state.const import (
+    OPT_DESIRED_ON,
+    PROXY_TYPE_SWITCH,
     RECONCILE_MAX_ATTEMPTS,
     RECONCILE_RETRY_DELAY,
 )
+from custom_components.desired_state.coordinator import ProxyCoordinator
 from custom_components.desired_state.diagnostics import (
     async_get_config_entry_diagnostics,
 )
 
-from .conftest import SOURCE_SWITCH, calls_to_source, set_source, setup_entry
+from .conftest import (
+    SOURCE_SWITCH,
+    build_entry,
+    calls_to_source,
+    set_source,
+    setup_entry,
+)
 
 PROXY_ENTITY_ID = "switch.test_proxy"
 
@@ -122,3 +132,35 @@ async def test_reconcile_gives_up_after_max_attempts(
     assert len(calls_to_source(service_calls, SOURCE_SWITCH, SERVICE_TURN_ON)) == (
         RECONCILE_MAX_ATTEMPTS + 1
     )
+
+
+async def test_reconcile_retries_when_service_not_available_yet(
+    hass: HomeAssistant, service_calls: list[Event]
+) -> None:
+    """A missing source service is retried instead of silently dropped."""
+    hass.states.async_set(SOURCE_SWITCH, STATE_OFF)
+    entry = build_entry(
+        source_entity=SOURCE_SWITCH,
+        proxy_type=PROXY_TYPE_SWITCH,
+        name="Late Service Proxy",
+        options={OPT_DESIRED_ON: True},
+    )
+    entry.add_to_hass(hass)
+    coordinator = ProxyCoordinator(hass, entry)
+    await coordinator.async_setup()
+
+    assert not hass.services.has_service("switch", SERVICE_TURN_ON)
+    assert await coordinator.async_reconcile() is False
+    assert not calls_to_source(service_calls, SOURCE_SWITCH)
+
+    assert await async_setup_component(hass, "switch", {})
+    await hass.async_block_till_done()
+
+    async_fire_time_changed(
+        hass, dt_util.utcnow() + timedelta(seconds=RECONCILE_RETRY_DELAY + 1)
+    )
+    await hass.async_block_till_done()
+
+    assert len(calls_to_source(service_calls, SOURCE_SWITCH, SERVICE_TURN_ON)) == 1
+
+    await coordinator.async_shutdown()
