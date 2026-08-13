@@ -1,1 +1,2 @@
-homeassistant==2026.8.0b6
+--pre
+homeassistant

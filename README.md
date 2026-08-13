@@ -185,7 +185,7 @@ Repository validation for HACS publishing is also configured through:
 - `.github/workflows/validate.yml` for `hacs/action`
 - `.github/workflows/hassfest.yml` for `home-assistant/actions/hassfest`
 - `.github/workflows/integration-tests.yml` for the pytest integration test suite
-- `.github/workflows/integration-tests-preview.yml` for pytest coverage against the latest pinned Home Assistant preview build
+- `.github/workflows/integration-tests-preview.yml` for pytest coverage against the latest Home Assistant preview build
 
 The test suite covers the switch proxy, the light proxy (from both light and switch sources),
 reconciliation, retries, persistence, diagnostics and the config flow.
