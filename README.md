@@ -31,10 +31,6 @@ a desired state proxy you get:
 2. Add `https://github.com/richardapeters/desired-state-proxy` as an *Integration*.
 3. Install **Desired State Proxy** and restart Home Assistant.
 
-To publish this repository in the default HACS store, make sure the HACS validation and Hassfest
-workflows are passing, then create a GitHub release and submit the repository to
-[`hacs/default`](https://github.com/hacs/default).
-
 ### Manual
 
 1. Copy the `custom_components/desired_state` directory into your Home Assistant
