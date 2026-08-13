@@ -1,0 +1,56 @@
+{
+  "title": "Desired State Proxy",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a desired state proxy",
+        "description": "Create a proxy entity that represents the desired state of an existing switch or light. The proxy stays available and remembers what you asked for, even when the source device is offline.",
+        "data": {
+          "source_entity": "Source entity",
+          "proxy_type": "Proxy type",
+          "proxy_name": "Proxy name",
+          "hide_source": "Hide the source entity"
+        },
+        "data_description": {
+          "source_entity": "The switch or light whose actual state should be tracked.",
+          "proxy_type": "Automatic picks a light for light sources and a switch for switch sources.",
+          "proxy_name": "Leave empty to derive the name from the source entity.",
+          "hide_source": "Hide the source entity in the user interface so only the proxy is shown."
+        }
+      }
+    },
+    "error": {
+      "already_proxied": "This entity is already proxied by another Desired State Proxy.",
+      "proxy_chain": "This entity is itself a Desired State Proxy; chaining proxies is not supported.",
+      "invalid_proxy_type": "A switch proxy can only proxy a switch entity.",
+      "invalid_source_domain": "Only switch and light entities can be proxied."
+    },
+    "abort": {
+      "already_configured": "This entity is already proxied by another Desired State Proxy."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Desired state proxy options",
+        "data": {
+          "proxy_name": "Proxy name",
+          "hide_source": "Hide the source entity"
+        },
+        "data_description": {
+          "proxy_name": "The name shown for the proxy entity.",
+          "hide_source": "Hide the source entity in the user interface so only the proxy is shown."
+        }
+      }
+    }
+  },
+  "selector": {
+    "proxy_type": {
+      "options": {
+        "auto": "Automatic",
+        "switch": "Switch",
+        "light": "Light"
+      }
+    }
+  }
+}
