@@ -18,6 +18,8 @@ jobs:
         with:
           python-version: "3.14"
       - name: Install dependencies
-        run: pip install -r requirements-test-preview.txt
+        run: |
+          pip install -r requirements-test.txt
+          pip install --upgrade --no-deps -r requirements-test-preview.txt
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q

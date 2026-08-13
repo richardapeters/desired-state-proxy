@@ -1,2 +1,3 @@
--r requirements-test-base.txt
 homeassistant==2026.8.1
+pytest-asyncio==1.4.0
+pytest-homeassistant-custom-component==0.13.355
