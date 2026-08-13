@@ -176,7 +176,7 @@ custom_components/desired_state/
 ## Development
 
 ```bash
-pip install homeassistant pytest pytest-homeassistant-custom-component pytest-asyncio
+pip install homeassistant==2025.1.4 pytest==8.3.4 pytest-homeassistant-custom-component==0.13.205 pytest-asyncio==0.24.0
 python -m pytest custom_components/desired_state/tests/ -q
 ```
 
