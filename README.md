@@ -25,11 +25,15 @@ a desired state proxy you get:
 
 ## Installation
 
-### HACS (custom repository)
+### HACS (custom repository until default-store inclusion)
 
 1. In HACS, choose *Integrations* → ⋮ → *Custom repositories*.
 2. Add `https://github.com/richardapeters/desired-state-proxy` as an *Integration*.
 3. Install **Desired State Proxy** and restart Home Assistant.
+
+To publish this repository in the default HACS store, make sure the HACS validation and Hassfest
+workflows are passing, then create a GitHub release and submit the repository to
+[`hacs/default`](https://github.com/hacs/default).
 
 ### Manual
 
@@ -154,6 +158,8 @@ the actual state of the source and whether both are in sync.
 ```
 custom_components/desired_state/
 ├── __init__.py        # setup/unload/remove of config entries
+├── brand/
+│   └── icon.png       # HACS / Home Assistant brand asset
 ├── config_flow.py     # UI configuration and validation
 ├── const.py           # constants
 ├── coordinator.py     # desired state storage, reconciliation and retries
@@ -174,9 +180,14 @@ pip install homeassistant pytest pytest-homeassistant-custom-component pytest-as
 python -m pytest custom_components/desired_state/tests/ -q
 ```
 
+Repository validation for HACS publishing is also configured through:
+
+- `.github/workflows/validate.yml` for `hacs/action`
+- `.github/workflows/hassfest.yml` for `home-assistant/actions/hassfest`
+
 The test suite covers the switch proxy, the light proxy (from both light and switch sources),
 reconciliation, retries, persistence, diagnostics and the config flow.
 
 ## License
 
-See the repository for license information.
+MIT
