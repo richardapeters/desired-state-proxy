@@ -1,7 +1,7 @@
 {
   "domain": "desired_state",
   "name": "Desired State Proxy",
-  "codeowners": [],
+  "codeowners": ["@richardapeters"],
   "config_flow": true,
   "documentation": "https://github.com/richardapeters/desired-state-proxy",
   "integration_type": "helper",
