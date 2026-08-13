@@ -154,6 +154,8 @@ the actual state of the source and whether both are in sync.
 ```
 custom_components/desired_state/
 ├── __init__.py        # setup/unload/remove of config entries
+├── brand/
+│   └── icon.png       # HACS / Home Assistant brand asset
 ├── config_flow.py     # UI configuration and validation
 ├── const.py           # constants
 ├── coordinator.py     # desired state storage, reconciliation and retries
@@ -170,13 +172,20 @@ custom_components/desired_state/
 ## Development
 
 ```bash
-pip install homeassistant pytest pytest-homeassistant-custom-component pytest-asyncio
+pip install -r requirements-test.txt
 python -m pytest custom_components/desired_state/tests/ -q
 ```
+
+Repository validation for HACS publishing is also configured through:
+
+- `.github/workflows/validate.yml` for `hacs/action`
+- `.github/workflows/hassfest.yml` for `home-assistant/actions/hassfest`
+- `.github/workflows/integration-tests.yml` for the pytest integration test suite
+- `.github/workflows/integration-tests-preview.yml` for pytest coverage against the latest available Home Assistant preview build
 
 The test suite covers the switch proxy, the light proxy (from both light and switch sources),
 reconciliation, retries, persistence, diagnostics and the config flow.
 
 ## License
 
-See the repository for license information.
+MIT
