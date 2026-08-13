@@ -25,7 +25,7 @@ a desired state proxy you get:
 
 ## Installation
 
-### HACS (custom repository until default-store inclusion)
+### HACS (custom repository)
 
 1. In HACS, choose *Integrations* → ⋮ → *Custom repositories*.
 2. Add `https://github.com/richardapeters/desired-state-proxy` as an *Integration*.
