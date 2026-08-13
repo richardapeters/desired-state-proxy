@@ -38,6 +38,6 @@ jobs:
           print(max(preview_versions))
           PY
           )"
-          pip install --upgrade --no-deps "homeassistant==${HA_PREVIEW_VERSION}"
+          pip install --upgrade "homeassistant==${HA_PREVIEW_VERSION}"
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q
