@@ -2,6 +2,8 @@ name: Integration Tests (Home Assistant Preview)
 
 on:
   push:
+    branches:
+      - main
   pull_request:
   schedule:
     - cron: "0 6 * * *"
