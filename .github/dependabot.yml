@@ -6,9 +6,23 @@ updates:
       interval: daily
     cooldown:
       default-days: 7
+    groups:
+      non-major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
   - package-ecosystem: pip
     directory: "/"
     schedule:
       interval: daily
     cooldown:
       default-days: 7
+    groups:
+      non-major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
