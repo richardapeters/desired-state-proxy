@@ -176,7 +176,7 @@ custom_components/desired_state/
 ## Development
 
 ```bash
-pip install homeassistant==2025.1.4 pytest==8.3.4 pytest-homeassistant-custom-component==0.13.205 pytest-asyncio==0.24.0
+pip install -r requirements-test.txt
 python -m pytest custom_components/desired_state/tests/ -q
 ```
 
@@ -185,6 +185,7 @@ Repository validation for HACS publishing is also configured through:
 - `.github/workflows/validate.yml` for `hacs/action`
 - `.github/workflows/hassfest.yml` for `home-assistant/actions/hassfest`
 - `.github/workflows/integration-tests.yml` for the pytest integration test suite
+- `.github/workflows/integration-tests-preview.yml` for pytest coverage against the latest pinned Home Assistant preview build
 
 The test suite covers the switch proxy, the light proxy (from both light and switch sources),
 reconciliation, retries, persistence, diagnostics and the config flow.

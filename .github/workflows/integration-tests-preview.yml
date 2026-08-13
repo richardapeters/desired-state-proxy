@@ -1,14 +1,16 @@
-name: Integration Tests
+name: Integration Tests (Home Assistant Preview)
 
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions: {}
 
 jobs:
-  integration-tests:
+  integration-tests-preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -16,6 +18,6 @@ jobs:
         with:
           python-version: "3.14"
       - name: Install dependencies
-        run: pip install -r requirements-test.txt
+        run: pip install -r requirements-test-preview.txt
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q

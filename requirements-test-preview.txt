@@ -1,0 +1,2 @@
+-r requirements-test-base.txt
+homeassistant==2026.8.0b6
