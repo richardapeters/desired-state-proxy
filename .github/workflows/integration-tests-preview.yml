@@ -39,5 +39,6 @@ jobs:
           PY
           )"
           pip install --upgrade --no-deps "homeassistant==${HA_PREVIEW_VERSION}"
+          pip install --upgrade pytest-homeassistant-custom-component
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q
