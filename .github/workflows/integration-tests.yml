@@ -21,22 +21,67 @@ jobs:
         shell: bash
         run: |
           pip install -r requirements-test.txt
-          HA_STABLE_VERSION="$(python - <<'PY'
+          read -r HA_STABLE_VERSION PYTEST_HA_VERSION <<<"$(python - <<'PY'
           import json
+          import sys
           import urllib.request
+          from packaging.requirements import Requirement
+          from packaging.specifiers import SpecifierSet
           from packaging.version import Version
-
+ 
+          helper_package = "pytest-homeassistant-custom-component"
           with urllib.request.urlopen("https://pypi.org/pypi/homeassistant/json") as response:
-              releases = json.load(response)["releases"]
+              ha_releases = json.load(response)["releases"]
 
-          stable_versions = [
-              Version(version)
-              for version, files in releases.items()
-              if files and not Version(version).is_prerelease
-          ]
-          print(max(stable_versions))
+          python_version = Version(f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
+
+          def is_python_compatible(files):
+              for file in files:
+                  requires_python = file.get("requires_python")
+                  if not requires_python or python_version in SpecifierSet(requires_python):
+                      return True
+              return False
+
+          stable_ha_versions = sorted(
+              (
+                  Version(version)
+                  for version, files in ha_releases.items()
+                  if files and is_python_compatible(files) and not Version(version).is_prerelease
+              ),
+              reverse=True,
+          )
+
+          with urllib.request.urlopen(f"https://pypi.org/pypi/{helper_package}/json") as response:
+              helper_releases = json.load(response)["releases"]
+          helper_versions = sorted(
+              (
+                  Version(version)
+                  for version, files in helper_releases.items()
+                  if files and not Version(version).is_prerelease and Version(version) >= Version("0.13.0")
+              ),
+              reverse=True,
+          )
+
+          for helper_version in helper_versions:
+              with urllib.request.urlopen(
+                  f"https://pypi.org/pypi/{helper_package}/{helper_version}/json"
+              ) as response:
+                  requires_dist = json.load(response)["info"].get("requires_dist") or []
+
+              for requirement_text in requires_dist:
+                  requirement = Requirement(requirement_text)
+                  if requirement.name != "homeassistant":
+                      continue
+                  if requirement.marker and not requirement.marker.evaluate():
+                      continue
+                  for ha_version in stable_ha_versions:
+                      if ha_version in requirement.specifier:
+                          print(ha_version, helper_version)
+                          raise SystemExit(0)
+
+          raise RuntimeError("No stable Home Assistant version found for pytest-homeassistant-custom-component>=0.13.0")
           PY
           )"
-          pip install --upgrade -c <(printf 'homeassistant==%s\n' "${HA_STABLE_VERSION}") "homeassistant==${HA_STABLE_VERSION}" "pytest-homeassistant-custom-component~=0.13.0"
+          pip install --upgrade -c <(printf 'homeassistant==%s\n' "${HA_STABLE_VERSION}") "homeassistant==${HA_STABLE_VERSION}" "pytest-homeassistant-custom-component==${PYTEST_HA_VERSION}"
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q
