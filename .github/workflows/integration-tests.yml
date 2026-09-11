@@ -18,6 +18,24 @@ jobs:
         with:
           python-version: "3.14"
       - name: Install dependencies
-        run: pip install -r requirements-test.txt
+        run: |
+          pip install -r requirements-test.txt
+          HA_STABLE_VERSION="$(python - <<'PY'
+          import json
+          import urllib.request
+          from packaging.version import Version
+
+          with urllib.request.urlopen("https://pypi.org/pypi/homeassistant/json") as response:
+              releases = json.load(response)["releases"]
+
+          stable_versions = [
+              Version(version)
+              for version, files in releases.items()
+              if files and not Version(version).is_prerelease
+          ]
+          print(max(stable_versions))
+          PY
+          )"
+          pip install --upgrade "homeassistant==${HA_STABLE_VERSION}" pytest-homeassistant-custom-component
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q
