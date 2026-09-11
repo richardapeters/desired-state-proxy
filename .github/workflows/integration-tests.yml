@@ -21,38 +21,7 @@ jobs:
         shell: bash
         run: |
           pip install -r requirements-test.txt
-          HA_STABLE_VERSION="$(python - <<'PY'
-          import json
-          import sys
-          import urllib.request
-          from packaging.specifiers import SpecifierSet
-          from packaging.version import Version
- 
-          with urllib.request.urlopen("https://pypi.org/pypi/homeassistant/json") as response:
-              releases = json.load(response)["releases"]
-
-          python_version = Version(f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
-
-          def is_python_compatible(files):
-              for file in files:
-                  requires_python = file.get("requires_python")
-                  if not requires_python or python_version in SpecifierSet(requires_python):
-                      return True
-              return False
-
-          stable_ha_versions = sorted(
-              (
-                  Version(version)
-                  for version, files in releases.items()
-                  if files and is_python_compatible(files) and not Version(version).is_prerelease
-              ),
-              reverse=True,
-          )
-          if not stable_ha_versions:
-              raise RuntimeError("No stable Home Assistant release available for this Python version")
-          print(stable_ha_versions[0])
-          PY
-          )"
-          pip install --upgrade -c <(printf 'homeassistant==%s\n' "${HA_STABLE_VERSION}") "homeassistant==${HA_STABLE_VERSION}" "pytest-homeassistant-custom-component~=0.13.0"
+          read -r HA_STABLE_VERSION PYTEST_HA_VERSION <<<"$(python .github/scripts/select_test_versions.py stable 3.14)"
+          pip install --upgrade "homeassistant==${HA_STABLE_VERSION}" "pytest-homeassistant-custom-component==${PYTEST_HA_VERSION}"
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q
