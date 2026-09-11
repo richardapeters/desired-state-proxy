@@ -22,23 +22,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements-test.txt
-          HA_PREVIEW_VERSION="$(python - <<'PY'
-          import json
-          import urllib.request
-          from packaging.version import Version
-           
-          with urllib.request.urlopen("https://pypi.org/pypi/homeassistant/json") as response:
-              releases = json.load(response)["releases"]
-           
-          preview_versions = [
-              Version(version)
-              for version, files in releases.items()
-              if files and Version(version).is_prerelease
-          ]
-          print(max(preview_versions))
-          PY
-          )"
-          pip install --upgrade --no-deps "homeassistant==${HA_PREVIEW_VERSION}"
-          pip install --upgrade pytest-homeassistant-custom-component
+          pip install --upgrade --pre pytest-homeassistant-custom-component
       - name: Run integration tests
         run: python -m pytest custom_components/desired_state/tests/ -q
