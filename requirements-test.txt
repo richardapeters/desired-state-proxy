@@ -1,2 +1,3 @@
-probatio==0.11.2
+homeassistant==2026.9.0b4
+probatio==0.11.4
 pytest-asyncio==1.4.0
