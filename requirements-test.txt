@@ -1,2 +1,2 @@
-probatio==0.11.4
+probatio==0.12.2
 pytest-asyncio==1.4.0
